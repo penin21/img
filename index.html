@@ -153,13 +153,7 @@
         console.log('before change:', ev);
       });
       grid.on('afterChange', ev => {
-        console.log('after change:', ev);
-              })
-      grid.resetData(gridData);
-
-
-
-      grid.on('click', ev => {
+        grid.on('click', ev => {
         console.log('clicked!!');
         // i = grid.getFocusedCell().rowKey;
         i = ev.rowKey;
@@ -200,6 +194,12 @@
         t.src = j4;
 
         })
+              })
+      grid.resetData(gridData);
+
+
+
+      
         
 
 
