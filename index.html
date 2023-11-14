@@ -1,138 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="1.css">
-    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" type="text/css" href="1.css">
 </head>
 
 
 <body>
   
+ 
 
-
-<div class="container">
-  <div class="box-1">
-  <form id="form-submit">
-  <input style=" width: 300px; height: 100px; font-size: 50px; text-align: center;" id="word" type="text" placeholder="Enter a word">
-  <input style="font-size: 50px; height: 100px;text-align: center;" type="submit">
-  </form>
-  
+    <div id="divider1" style="height:465.25px">
+    <div id="container" style="display:flex;">
+    
+    <div id="item1">
+      <img src="https://s3.ap-northeast-2.amazonaws.com/file.cedulearn.com/dalle/relate_72_1.png">
+    </div>
+    <div id="item2">
+      <img src="https://s3.ap-northeast-2.amazonaws.com/file.cedulearn.com/dalle/relate_72_1.png">
+    </div>
+    <div id="item3">
+      <img src="https://s3.ap-northeast-2.amazonaws.com/file.cedulearn.com/dalle/relate_72_1.png">
+    </div>
+    <div id="item4">
+      <img src="https://s3.ap-northeast-2.amazonaws.com/file.cedulearn.com/dalle/relate_72_1.png">
+    </div>
   </div>
-  <div>
-  <button id="copy-btn">복사</button>
 </div>
-<div style="width: 100%; height: 0px; background-color: red;"></div>
-<div style="text-align: left;">
-  <ul id="list">
-  </ul>
+<div id="divider2">
+  <div id="grid"></div>
 </div>
-</div>
+
+ 
+
+
+
 
 
   
+<link rel="stylesheet" href="https://uicdn.toast.com/grid/latest/tui-grid.css" />
+
+<script src="https://uicdn.toast.com/grid/latest/tui-grid.js"></script>
+  <script src="1.js"></script>
+  <script>
+    class CheckboxRenderer {
+      constructor(props) {
+        const { grid, rowKey } = props;
+
+        const label = document.createElement('label');
+        label.className = 'checkbox tui-grid-row-header-checkbox';
+        label.setAttribute('for', String(rowKey));
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.className = 'hidden-input';
+        hiddenInput.id = String(rowKey);
+
+        const customInput = document.createElement('span');
+        customInput.className = 'custom-input';
+
+        label.appendChild(hiddenInput);
+        label.appendChild(customInput);
+
+        hiddenInput.type = 'checkbox';
+        label.addEventListener('click', (ev) => {
+          ev.preventDefault();
+
+          if (ev.shiftKey) {
+            grid[!hiddenInput.checked ? 'checkBetween' : 'uncheckBetween'](rowKey);
+            return;
+          }
+
+          grid[!hiddenInput.checked ? 'check' : 'uncheck'](rowKey);
+        });
+
+        this.el = label;
+
+        this.render(props);
+      }
+
+      getElement() {
+        return this.el;
+      }
+
+      render(props) {
+        const hiddenInput = this.el.querySelector('.hidden-input');
+        const checked = Boolean(props.value);
+
+        hiddenInput.checked = checked;
+      }
+    }
+    class CustomTextEditor {
+        constructor(props) {
+          const el = document.createElement('input');
+          const { maxLength } = props.columnInfo.editor.options;
   
-</div>
+          el.type = 'text';
+          el.maxLength = maxLength;
+          el.value = String(props.value);
   
-</div>
+          this.el = el;
+        }
+  
+        getElement() {
+          return this.el;
+        }
+  
+        getValue() {
+          return this.el.value;
+        }
+  
+        mounted() {
+          this.el.select();
+        }
+      }
+  
+      const grid = new tui.Grid({
+        el: document.getElementById('grid'),
+        data: gridData,
+        scrollX: false,
+        scrollY: false,
+        columns: [
+          {
+            header: '표제어',
+            name: 'name',
+            editor: 'text'
+          },
+          {
+            header: '링크1',
+            name: 'link1',
+            editor: 'text'
+          },
+          {
+            header: '링크2',
+            name: 'link2',
+            editor: 'text'
+          },
+          {
+            header: '링크3',
+            name: 'link3',
+            editor: 'text'
+          },
+          {
+            header: '링크4',
+            name: 'link4',
+            editor: 'text'
+          },
+        ]
+      });
+      grid.on('beforeChange', ev => {
+        console.log('before change:', ev);
+      });
+      grid.on('afterChange', ev => {
+        console.log('after change:', ev);
+              })
+      grid.resetData(gridData);
 
 
 
-
-<script>
-
-  document.querySelector('#form-submit').addEventListener('submit',function(e){
-    e.preventDefault();
-
-    document.querySelector('#list').innerHTML =''; 
-    // 위와 같이 더 쉬운 방법이 존재하긴 했군
-    // document.querySelector('#list').innerHTML.remove(); 이건 먹히지 않는다. 위처럼 ='';로 두는 간단한 방법이 있음
-
-    // var goaway = document.getElementById("list");
-    // while ( goaway.hasChildNodes() )
-    // {
-    // goaway.removeChild( goaway.firstChild );       
-    // }
-    
-    
-
-   fetch('http://15.165.130.0:1234/premium/wordsearch2?word='+document.querySelector('#word').value.trim())
-  .then(res => res.json())
-  .then(function(data){ 
-
-      var result = data['items'].find(function(rkqt){return rkqt.word.trim().toUpperCase() === document.querySelector('#word').value.trim().toUpperCase()});
-      
-      fetch('http://15.165.130.0:1234/premium/meaning?masterId='+result['id'])
-      .then(res => res.json())
-      .then(function(data){ 
-
-       
-      
-       data.forEach((array) => {
-            
-          
-          fetch('http://15.165.130.0:1234/premium/loadpartsbyMeaningId?meaningId='+ array['id'])
-          .then(res => res.json())
-          .then(function(datum){
-            // console.log(datum.map(el => el['partcode'] +" "+ el['partmeaning']))
-            var li = document.createElement("li");
-            var ul = document.createElement("ul");
-            // ul.textContent = datum.map(el => el['partcode'] +" "+ el['partmeaning']);
-
-            if(array['level_to']==1) {
-              array['level_to']="[초저]";
-            } else if (array['level_to']==2) {
-              array['level_to']="[초고]";
-            } else if (array['level_to']==3) {
-              array['level_to']="[중기]";
-            } else if (array['level_to']==4) {
-              array['level_to']="[중심]";
-            } else if (array['level_to']==5) {
-              array['level_to']="[고기]";
-            } else if (array['level_to']==6) {
-              array['level_to']="[고심]";
-            } else if (array['level_to']==7) {
-              array['level_to']="[공무원]";
-            }
-            
-           
-            
-          
-
-            li.textContent = array['level_to'] +" "+ datum.map(el => "("+ el['partcode'] +") "+ el['partmeaning']);
-            list.appendChild(li);
-            
-
-            })
-
-
-          })
-      })
-      
-
-  })
-
-
-
-})
-
-document.querySelector('#copy-btn').addEventListener('click', function() {
-
-     txt = document.querySelector('#list').innerText;
-     t = document.createElement("textarea");
-     document.body.appendChild(t);
-     t.textContent = txt;
-     t.select();
-     console.log(document.querySelector('#list').textContent)
-     document.execCommand('copy');
-     document.body.removeChild(t);
+      grid.on('click', ev => {
+        console.log('clicked!!');
+        // i = grid.getFocusedCell().rowKey;
+        i = ev.rowKey;
+        console.log(i)
+        j1 = grid.getValue(i,'link1')
+        j2 = grid.getValue(i,'link2')
+        j3 = grid.getValue(i,'link3')
+        j4 = grid.getValue(i,'link4')
+        console.log(j1)
+        console.log(j2)
+        console.log(j3)
+        console.log(j4)
      
-    })
-    
- </script>
-  
-</body>
+        var g1 = document.getElementById("item1");
+        g1.innerHTML='';
+        var g2 = document.getElementById("item2");
+        g2.innerHTML='';
+        var g3 = document.getElementById("item3");
+        g3.innerHTML='';
+        var g4 = document.getElementById("item4");
+        g4.innerHTML='';
 
+          // 이미지 생성문
+        t = document.createElement("img");
+        document.querySelector('#item1').appendChild(t);
+        t.src = j1;
+
+        t = document.createElement("img");
+        document.querySelector('#item2').appendChild(t);
+        t.src = j2;
+
+        t = document.createElement("img");
+        document.querySelector('#item3').appendChild(t);
+        t.src = j3;
+
+        t = document.createElement("img");
+        document.querySelector('#item4').appendChild(t);
+        t.src = j4;
+
+        })
+        
+
+
+     
+      
+      
+     </script>
+</body>
 </html>
